@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Apr  4 20:25:06 2023
+
+@author: batman
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define atmospheric parameters
+altitudes = np.linspace(0, 100000, 1000)  # Altitude range in meters
+absorption_coeff = np.array([0.001, 0.002, 0.003, 0.005, 0.008, 0.01, 0.02, 0.05, 0.1])  # Absorption coefficient at each altitude layer
+
+# Define laser parameters
+wavelength = 1064e-9  # Laser wavelength in meters
+beam_radius = 1e-3  # Laser beam radius in meters
+power = 1  # Laser power in watts
+
+# Define simulation parameters
+num_steps = 10000  # Number of simulation steps
+step_size = np.max(altitudes) / num_steps  # Step size in meters
+
+# Initialize variables
+distance = 0
+intensity = power
+
+# Simulate laser propagation
+intensity_values = []
+for i in range(num_steps):
+    # Calculate absorption coefficient at current altitude
+    altitude_index = int(distance / step_size)
+    absorption = absorption_coeff[altitude_index]
+    
+    # Calculate distance and intensity at next step
+    distance += step_size
+    intensity *= np.exp(-absorption * step_size)
+    intensity_values.append(intensity)
+
+# Plot intensity versus distance
+plt.plot(np.linspace(0, distance, num_steps), intensity_values)
+plt.xlabel('Distance (m)')
+plt.ylabel('Intensity (W/m^2)')
+plt.show()
